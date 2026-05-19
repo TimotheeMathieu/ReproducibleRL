@@ -1,0 +1,10 @@
+name: repro_Mujoco_Conda_Unfrozen
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - gymnasium-mujoco
+  - stable-baselines3
+  - opencv
+  - gym
+  - shimmy

@@ -1,0 +1,16 @@
+name: repro_Atari_Conda_Unfrozen
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - stable-baselines3
+  - gymnasium-atari
+  - shimmy
+  - gym
+  - opencv
+  - pyyaml
+  - pip
+  - pip:
+    - ale_py
+    # - opencv-python
+

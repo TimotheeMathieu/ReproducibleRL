@@ -1,0 +1,8 @@
+name: repro_Acrobot_Conda_Unfrozen
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - pip:
+    - stable-baselines3
+    - gymnasium

@@ -1,0 +1,127 @@
+--- mujoco-3.3.1/mujoco/cmake/MujocoDependencies.cmake	2025-04-09 18:13:03.000000000 +0200
++++ mujoco-3.3.1/mujoco/cmake/MujocoDependencies.cmake	2025-04-17 09:54:35.153902498 +0200
+@@ -91,23 +91,12 @@
+ )
+ 
+ if(NOT TARGET lodepng)
+-  FetchContent_Declare(
+-    lodepng
+-    GIT_REPOSITORY https://github.com/lvandeve/lodepng.git
+-    GIT_TAG ${MUJOCO_DEP_VERSION_lodepng}
+-  )
+-
+-  FetchContent_GetProperties(lodepng)
+-  if(NOT lodepng_POPULATED)
+-    FetchContent_Populate(lodepng)
+-    # This is not a CMake project.
+-    set(LODEPNG_SRCS ${lodepng_SOURCE_DIR}/lodepng.cpp)
+-    set(LODEPNG_HEADERS ${lodepng_SOURCE_DIR}/lodepng.h)
+-    add_library(lodepng STATIC ${LODEPNG_HEADERS} ${LODEPNG_SRCS})
+-    target_compile_options(lodepng PRIVATE ${MUJOCO_MACOS_COMPILE_OPTIONS})
+-    target_link_options(lodepng PRIVATE ${MUJOCO_MACOS_LINK_OPTIONS})
+-    target_include_directories(lodepng PUBLIC ${lodepng_SOURCE_DIR})
+-  endif()
++  message(STATUS "Using system-provided lodepng")
++  # Assumes Guix provides lodepng.h in include path
++  include_directories(${LODEPNG_PATH}/include)
++  add_library(lodepng INTERFACE)
++  target_include_directories(lodepng INTERFACE ${LODEPNG_PATH}/include)
++  # target_link_libraries(lodepng INTERFACE ${LODEPNG_PATH}/lib/liblodepng.so) 
+ endif()
+ 
+ if(NOT TARGET marchingcubecpp)
+--- mujoco-3.3.1/mujoco/CMakeLists.txt	2025-04-09 18:13:03.000000000 +0200
++++ mujoco-3.3.1/mujoco/CMakeLists.txt	2025-04-16 15:15:56.369107905 +0200
+@@ -132,7 +132,7 @@
+ set(MUJOCO_PYTHON_ABSL_TARGETS absl::core_headers absl::flat_hash_map absl::span)
+ findorfetch(
+   USE_SYSTEM_PACKAGE
+-  OFF
++  ON
+   PACKAGE_NAME
+   absl
+   LIBRARY_NAME
+@@ -165,7 +165,7 @@
+ add_compile_definitions(EIGEN_MPL2_ONLY)
+ findorfetch(
+   USE_SYSTEM_PACKAGE
+-  OFF
++  ON
+   PACKAGE_NAME
+   Eigen3
+   LIBRARY_NAME
+@@ -180,7 +180,7 @@
+ )
+ 
+ # ==================== PYBIND11 ================================================
+-option(MUJOCO_PYTHON_USE_SYSTEM_PYBIND11 "Use installed pybind11 version." OFF)
++option(MUJOCO_PYTHON_USE_SYSTEM_PYBIND11 "Use installed pybind11 version." ON)
+ findorfetch(
+   USE_SYSTEM_PACKAGE
+   MUJOCO_PYTHON_USE_SYSTEM_PYBIND11
+--- mujoco-3.3.1/mujoco/simulate/cmake/SimulateDependencies.cmake	2025-04-09 18:13:03.000000000 +0200
++++ mujoco-3.3.1/mujoco/simulate/cmake/SimulateDependencies.cmake	2025-04-17 09:12:57.869615949 +0200
+@@ -26,8 +26,8 @@
+ )
+ unset(DEFAULT_USE_SYSTEM_MUJOCO)
+ 
+-option(MUJOCO_SIMULATE_USE_SYSTEM_MUJOCO "Use installed MuJoCo version." OFF)
+-option(MUJOCO_SIMULATE_USE_SYSTEM_GLFW "Use installed GLFW version." OFF)
++option(MUJOCO_SIMULATE_USE_SYSTEM_MUJOCO "Use installed MuJoCo version." ON)
++option(MUJOCO_SIMULATE_USE_SYSTEM_GLFW "Use installed GLFW version." ON)
+ 
+ set(MUJOCO_DEP_VERSION_glfw3
+     7482de6071d21db77a7236155da44c172a7f6c9e # 3.3.8
+@@ -74,6 +74,17 @@
+ set(GLFW_BUILD_DOCS OFF)
+ set(GLFW_INSTALL OFF)
+ 
++
++if(NOT TARGET glfw)
++  message(STATUS "Skipping FetchContent for glfw - using system lib.")
++  add_library(glfw INTERFACE)
++  target_include_directories(glfw INTERFACE ${GLFW_PATH}/include)
++  # target_include_directories(glfw INTERFACE ${GLFW_PATH}/include/GLFW)
++  target_link_libraries(glfw INTERFACE ${GLFW_PATH}/lib/libglfw.so)
++endif()
++
++
++
+ findorfetch(
+   USE_SYSTEM_PACKAGE
+   MUJOCO_SIMULATE_USE_SYSTEM_GLFW
+--- mujoco-3.3.1/mujoco/simulate/CMakeLists.txt	2025-04-09 18:13:03.000000000 +0200
++++ mujoco-3.3.1/mujoco/simulate/CMakeLists.txt	2025-04-17 10:11:17.549594427 +0200
+@@ -79,25 +79,14 @@
+   endif()
+ endif()
+ 
+-# Fetch lodepng dependency.
+-if(NOT TARGET lodepng)
+-  FetchContent_Declare(
+-    lodepng
+-    GIT_REPOSITORY https://github.com/lvandeve/lodepng.git
+-    GIT_TAG ${MUJOCO_DEP_VERSION_lodepng}
+-  )
+ 
+-  FetchContent_GetProperties(lodepng)
+-  if(NOT lodepng_POPULATED)
+-    FetchContent_Populate(lodepng)
+-    # This is not a CMake project.
+-    set(LODEPNG_SRCS ${lodepng_SOURCE_DIR}/lodepng.cpp)
+-    set(LODEPNG_HEADERS ${lodepng_SOURCE_DIR}/lodepng.h)
+-    add_library(lodepng STATIC ${LODEPNG_HEADERS} ${LODEPNG_SRCS})
+-    target_compile_options(lodepng PRIVATE ${MUJOCO_MACOS_COMPILE_OPTIONS})
+-    target_link_options(lodepng PRIVATE ${MUJOCO_MACOS_LINK_OPTIONS})
+-    target_include_directories(lodepng PUBLIC ${lodepng_SOURCE_DIR})
+-  endif()
++if(NOT TARGET lodepng)
++  message(STATUS "Using system-provided lodepng")
++  # Assumes Guix provides lodepng.h in include path
++  include_directories(${LODEPNG_PATH}/include)
++  add_library(lodepng INTERFACE)
++  target_include_directories(lodepng INTERFACE ${LODEPNG_PATH}/include)
++  # target_link_libraries(lodepng INTERFACE ${LODEPNG_PATH}/lib/liblodepng.so) 
+ endif()
+ 
+ # Simulate library

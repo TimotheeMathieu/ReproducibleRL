@@ -1,0 +1,33 @@
+Site,Cluster,Access Condition,Date of arrival,Manufacturing date,Nodes,CPU,CPU,CPU,CPU,Memory,Storage,Network,Accelerators
+Grenoble,dahu,,2018-03-22,2017-12-12,32,2,Intel Xeon Gold 6130,16 cores/CPU,x86_64,192 GiB,240 GB SSD + 480 GB SSD + 4.0 TB HDD,10 Gbps + 100 Gbps Omni-Path,
+Grenoble,drac,exotic job type,2020-10-05,2016-10-17,8,2,IBM POWER8NVL 1.0,10 cores/CPU,ppc64le,128 GiB,1.0 TB HDD + 1.0 TB HDD,10 Gbps + 2 x 100 Gbps InfiniBand,4 x Nvidia Tesla P100 (16 GiB)
+Grenoble,servan,exotic job type,2021-12-15,2021-12-10,2,2,AMD EPYC 7352,24 cores/CPU,x86_64,128 GiB,1.6 TB SSD + 1.6 TB SSD,2 x 10 Gbps + 25 Gbps + 2 x 100 Gbps FPGA/Ethernet,Xilinx Alveo U200
+Grenoble,troll,exotic job type,2019-12-23,2019-11-21,4,2,Intel Xeon Gold 5218,16 cores/CPU,x86_64,384 GiB + 1.5 TiB PMEM,480 GB SSD + 1.6 TB SSD,2 x 25 Gbps (SR‑IOV) + 100 Gbps InfiniBand,
+Grenoble,yeti,exotic job type,2018-01-16,2017-12-26,4,4,Intel Xeon Gold 6130,16 cores/CPU,x86_64,768 GiB,"[1,3]: 480 GB SSD + 3 x 2.0 TB HDD* + 1.6 TB SSD [2,4]: 480 GB SSD + 3 x 2.0 TB HDD* + 2 x 1.6 TB SSD",10 Gbps + 100 Gbps Omni-Path,
+Lille,chiclet,,2018-08-06,2018-07-27,8,2,AMD EPYC 7301,16 cores/CPU,x86_64,128 GiB,[1-7]: 480 GB SSD + 2 x 4.0 TB HDD* 8: 480 GB SSD + 4.0 TB HDD*,2 x 25 Gbps,
+Lille,chifflot,,2018-08-01,2018-07-17,8,2,Intel Xeon Gold 6126,12 cores/CPU,x86_64,192 GiB,480 GB SSD + 480 GB SSD* + 4 x 4.0 TB HDD*,"[1-2,5-8]: 2 x 25 Gbps [3-4]: 25 Gbps",[1-6]: 2 x Nvidia Tesla P100 (16 GiB) [7-8]: 2 x Nvidia Tesla V100 (32 GiB)
+Lille,chirop,,2024-01-25,2023-05-02,5,2,Intel Xeon Platinum 8358,32 cores/CPU,x86_64,512 GiB,1.92 TB SSD + 2 x 3.84 TB SSD,2 x 25 Gbps,
+Lille,chuc,,2024-01-22,2023-05-02,8,1,AMD EPYC 7513,32 cores/CPU,x86_64,512 GiB,1.92 TB SSD + 3 x 1.92 TB SSD,2 x 25 Gbps (SR‑IOV),4 x Nvidia A100 (40 GiB)
+Luxembourg,clervaux,,2025-09-01,2016-12-29,48,2,Intel Xeon E5-2680 v4,14 cores/CPU,x86_64,128 GiB,120 GB SSD,10 Gbps (SR‑IOV),
+Luxembourg,larochette,,2024-06-24,2024-07-24,7,2,Intel Xeon Platinum 8568Y+,48 cores/CPU,x86_64,512 GiB,3.2 TB SSD,25 Gbps,4 x AMD MI210 (64 GiB)
+Luxembourg,vianden,exotic job type,2025-01-06,2024-07-14,1,2,Intel Xeon Platinum 8470,52 cores/CPU,x86_64,2.0 TiB,3.2 TB SSD,2 x 10 Gbps + 100 Gbps,8 x AMD MI300X (192 GiB)
+Lyon,gemini,exotic job type,2019-09-01,2019-06-12,2,2,Intel Xeon E5-2698 v4,20 cores/CPU,x86_64,512 GiB,480 GB SSD + 4 x 1.92 TB SSD*,10 Gbps (SR‑IOV),8 x Nvidia Tesla V100 (32 GiB)
+Lyon,hercule,,2012-10-02,2012-07-19,4,2,Intel Xeon E5-2620,6 cores/CPU,x86_64,32 GiB,2.0 TB HDD + 2 x 2.0 TB HDD,10 Gbps (SR‑IOV),
+Lyon,hydra,exotic job type,2024-02-15,2024-02-15,4,1,NVIDIA/ARM Grace A02 CPU,72 cores/CPU,aarch64,480 GiB,960 GB SSD + 1.92 TB SSD,10 Gbps (SR‑IOV),Nvidia H200 (96 GiB)
+Lyon,neowise,exotic job type,2021-05-17,2021-05-17,10,1,AMD EPYC 7642,48 cores/CPU,x86_64,512 GiB,1.92 TB SSD,2 x 10 Gbps (SR‑IOV) + 2 x 100 Gbps InfiniBand,8 x AMD MI50 (32 GiB)
+Lyon,nova,,2016-12-01,2016-10-28,20,2,Intel Xeon E5-2620 v4,8 cores/CPU,x86_64,64 GiB,598 GB HDD,10 Gbps (SR‑IOV),
+Lyon,orion,,2012-09-14,2012-07-16,3,2,Intel Xeon E5-2630,6 cores/CPU,x86_64,32 GiB,299 GB HDD,10 Gbps (SR‑IOV),Nvidia Tesla M2075 (5 GiB)**
+Lyon,pyxis,exotic job type,2020-01-06,2019-11-07,4,2,Cavium ThunderX2 99xx,32 cores/CPU,aarch64,256 GiB,250 GB SSD + 250 GB SSD,10 Gbps (SR‑IOV),
+Lyon,sagittaire,,2006-07-01,2006-07-01,9,2,AMD Opteron 250,1 core/CPU,x86_64,2 GiB,73 GB HDD,1 Gbps,
+Lyon,sirius,exotic job type,2021-11-18,2021-11-24,1,2,AMD EPYC 7742,64 cores/CPU,x86_64,1.0 TiB,1.92 TB SSD + 1.92 TB SSD + 4 x 3.84 TB SSD,100 Gbps,8 x Nvidia A100 (40 GiB)
+Lyon,taurus,,2012-09-14,2012-07-16,12,2,Intel Xeon E5-2630,6 cores/CPU,x86_64,32 GiB,299 GB HDD,10 Gbps (SR‑IOV),
+Nancy,gros,,2019-09-04,2019-07-16,124,1,Intel Xeon Gold 5220,18 cores/CPU,x86_64,96 GiB,480 GB SSD + 960 GB SSD*,2 x 25 Gbps (SR‑IOV),
+Nancy,grouille,exotic job type,2021-01-13,2020-12-07,2,2,AMD EPYC 7452,32 cores/CPU,x86_64,128 GiB,1.92 TB SSD + 960 GB SSD*,25 Gbps,2 x Nvidia A100 (40 GiB)
+Nantes,econome,,2014-04-16,2012-06-28,24,2,Intel Xeon E5-2660,8 cores/CPU,x86_64,64 GiB,2.0 TB HDD,10 Gbps (SR‑IOV),
+Nantes,ecotype,,2017-10-16,2017-07-11,48,2,Intel Xeon E5-2630L v4,10 cores/CPU,x86_64,128 GiB,400 GB SSD,2 x 10 Gbps (SR‑IOV),
+Rennes,paradoxe,,2024-01-02,2023-05-27,32,2,Intel Xeon Gold 5320,26 cores/CPU,x86_64,384 GiB,1.92 TB SSD + 1.92 TB SSD,25 Gbps,
+Rennes,parasilo,,2015-01-13,2015-01-13,25,2,Intel Xeon E5-2630 v3,8 cores/CPU,x86_64,128 GiB,600 GB HDD + 4 x 600 GB HDD* + 200 GB SSD*,2 x 10 Gbps (SR‑IOV),
+Sophia,uvb,,2011-01-04,2011-01-04,4,2,Intel Xeon X5670,6 cores/CPU,x86_64,96 GiB,250 GB HDD,1 Gbps (SR‑IOV) + 40 Gbps InfiniBand,
+Strasbourg,fleckenstein,,2023-08-01,2022-12-14,10,2,Intel Xeon Silver 4314,16 cores/CPU,x86_64,512 GiB,960 GB SSD + 3 x 2.4 TB HDD,25 Gbps (SR‑IOV) + 100 Gbps (SR‑IOV),
+Toulouse,estats,exotic job type,2023-06-13,2022-12-01,12,1,Nvidia Carmel,8 cores/CPU,aarch64,32 GiB,2.0 TB SSD,1 Gbps,Nvidia AGX Xavier (30 GiB)
+Toulouse,montcalm,,2022-12-01,2022-11-06,10,2,Intel Xeon Silver 4314,16 cores/CPU,x86_64,256 GiB,960 GB SSD,10 Gbps,

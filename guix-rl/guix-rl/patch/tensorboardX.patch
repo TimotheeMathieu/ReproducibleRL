@@ -1,0 +1,56 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index 3fdad3f..f4d2727 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -7,7 +7,7 @@ name = "tensorboardX"
+ dynamic = ["version", "readme"]
+ description = "TensorBoardX lets you watch Tensors Flow without Tensorflow"
+ requires-python = ">=3.9"
+-license ="MIT"
++license ={file = "LICENSE"}
+ authors = [
+     {name = "Tzu-Wei Huang", email = "huang.dexter@gmail.com"}
+ ]
+diff --git a/tests/test_embedding.py b/tests/test_embedding.py
+index 6a93f0c..3cc7209 100644
+--- a/tests/test_embedding.py
++++ b/tests/test_embedding.py
+@@ -2,7 +2,7 @@ import unittest
+ import torch
+ import boto3
+ from tensorboardX import SummaryWriter
+-from moto import mock_s3
++from moto import mock_aws
+ 
+ 
+ 
+@@ -65,7 +65,7 @@ class EmbeddingTest(unittest.TestCase):
+             w.add_embedding(all_features,
+                             label_img=all_images,
+                             global_step=2)
+-    @mock_s3
++    @mock_aws
+     def test_embedding_s3_mock(self):
+         client = boto3.client('s3', region_name='us-east-1')
+         client.create_bucket(Bucket='this')
+diff --git a/tests/test_record_writer.py b/tests/test_record_writer.py
+index d68f768..2295122 100644
+--- a/tests/test_record_writer.py
++++ b/tests/test_record_writer.py
+@@ -4,14 +4,14 @@ from tensorboardX.record_writer import S3RecordWriter, make_valid_tf_name, GCSRe
+ import os
+ import boto3
+ import shutil
+-from moto import mock_s3
++from moto import mock_aws
+ 
+ os.environ.setdefault("AWS_ACCESS_KEY_ID", "foobar_key")
+ os.environ.setdefault("AWS_SECRET_ACCESS_KEY", "foobar_secret")
+ 
+ 
+ class RecordWriterTest(unittest.TestCase):
+-    @mock_s3
++    @mock_aws
+     def test_record_writer_s3(self):
+         client = boto3.client('s3', region_name='us-east-1')
+         client.create_bucket(Bucket='this')

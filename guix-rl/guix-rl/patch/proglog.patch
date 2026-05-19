@@ -1,0 +1,13 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index c98cba7..6cb634a 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -1,7 +1,7 @@
+ [project]
+ name = "proglog"
+ version = "0.1.12"
+-license = "MIT"
++license ={file = "LICENSE"}
+ authors = [{ name = "Zulko" }]
+ description = "Log and progress bar manager for console, notebooks, web..."
+ readme = "pypi-readme.rst"

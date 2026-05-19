@@ -1,0 +1,5 @@
+ale-py==0.11.2
+matplotlib==3.10.8
+munkres==1.1.4
+numpy==1.26.4
+opencv-python==4.11.0.86

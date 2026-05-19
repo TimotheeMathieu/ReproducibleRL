@@ -1,0 +1,7 @@
+stable-baselines3
+gym
+gymnasium[mujoco]
+opencv-python
+pytz
+shimmy
+tensorboard

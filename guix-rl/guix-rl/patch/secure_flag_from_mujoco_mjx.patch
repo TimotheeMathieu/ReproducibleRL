@@ -1,0 +1,20 @@
+diff --git a/mujoco/mjx/viewer.py b/mjx/mujoco/mjx/viewer.py
+index 5cdce300..f8a33ba2 100644
+--- a/mujoco/mjx/viewer.py
++++ b/mujoco/mjx/viewer.py
+@@ -28,9 +28,12 @@ import mujoco.viewer
+ 
+ 
+ _JIT = flags.DEFINE_bool('jit', True, 'To jit or not to jit.')
+-_MODEL_PATH = flags.DEFINE_string(
+-    'mjcf', None, 'Path to a MuJoCo MJCF file.', required=True
+-)
++
++
++if 'mjcf' not in flags.FLAGS:
++    _MODEL_PATH = flags.DEFINE_string(
++        'mjcf', None, 'Path to a MuJoCo MJCF file.', required=True
++    )
+ 
+ 
+ _VIEWER_GLOBAL_STATE = {

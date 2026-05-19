@@ -1,0 +1,343 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 62a396ea..e4a651b2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -95,7 +95,7 @@ add_subdirectory(src/render)
+ add_subdirectory(src/thread)
+ add_subdirectory(src/ui)
+ 
+-target_compile_definitions(mujoco PRIVATE _GNU_SOURCE CCD_STATIC_DEFINE MUJOCO_DLL_EXPORTS -DMC_IMPLEM_ENABLE)
++target_compile_definitions(mujoco PRIVATE _GNU_SOURCE MUJOCO_DLL_EXPORTS -DMC_IMPLEM_ENABLE)
+ if(MUJOCO_ENABLE_AVX_INTRINSICS)
+   target_compile_definitions(mujoco PUBLIC mjUSEPLATFORMSIMD)
+ endif()
+diff --git a/cmake/MujocoDependencies.cmake b/cmake/MujocoDependencies.cmake
+index 004aedc4..1160eee4 100644
+--- a/cmake/MujocoDependencies.cmake
++++ b/cmake/MujocoDependencies.cmake
+@@ -91,44 +91,97 @@ set(BUILD_SHARED_LIBS
+ )
+ 
+ if(NOT TARGET lodepng)
+-  FetchContent_Declare(
+-    lodepng
+-    GIT_REPOSITORY https://github.com/lvandeve/lodepng.git
+-    GIT_TAG ${MUJOCO_DEP_VERSION_lodepng}
+-  )
+-
+-  FetchContent_GetProperties(lodepng)
+-  if(NOT lodepng_POPULATED)
+-    FetchContent_Populate(lodepng)
+-    # This is not a CMake project.
+-    set(LODEPNG_SRCS ${lodepng_SOURCE_DIR}/lodepng.cpp)
+-    set(LODEPNG_HEADERS ${lodepng_SOURCE_DIR}/lodepng.h)
+-    add_library(lodepng STATIC ${LODEPNG_HEADERS} ${LODEPNG_SRCS})
+-    target_compile_options(lodepng PRIVATE ${MUJOCO_MACOS_COMPILE_OPTIONS})
+-    target_link_options(lodepng PRIVATE ${MUJOCO_MACOS_LINK_OPTIONS})
+-    target_include_directories(lodepng PUBLIC ${lodepng_SOURCE_DIR})
+-  endif()
++  message(STATUS "Using system-provided lodepng")
++  # Assumes Guix provides lodepng.h in include path
++  include_directories(${LODEPNG_PATH}/include)
++  add_library(lodepng INTERFACE)
++  target_include_directories(lodepng INTERFACE ${LODEPNG_PATH}/include)
++  target_link_libraries(lodepng INTERFACE ${LODEPNG_PATH}/lib/liblodepng.so) 
+ endif()
+ 
+ if(NOT TARGET marchingcubecpp)
+-  FetchContent_Declare(
+-    marchingcubecpp
+-    GIT_REPOSITORY https://github.com/aparis69/MarchingCubeCpp.git
+-    GIT_TAG ${MUJOCO_DEP_VERSION_MarchingCubeCpp}
+-  )
++  message(STATUS "Skipping FetchContent for marchingcubecpp - using system lib.")
++  add_library(marchingcubecpp INTERFACE)
++  target_include_directories(marchingcubecpp INTERFACE ${MARCHINGCUBECPP_PATH}/include)
++  # target_link_libraries(marchingcubecpp INTERFACE ${MARCHINGCUBECPP_PATH}/lib/libmarchingcubecpp.so)
++endif()
+ 
+-  FetchContent_GetProperties(marchingcubecpp)
+-  if(NOT marchingcubecpp_POPULATED)
+-    FetchContent_Populate(marchingcubecpp)
+-    include_directories(${marchingcubecpp_SOURCE_DIR})
+-  endif()
++if(NOT TARGET qhull)
++  message(STATUS "Skipping FetchContent for Qhull - using system lib.")
++  add_library(qhull INTERFACE)
++  target_include_directories(qhull INTERFACE ${QHULL_PATH}/include)
++  # target_link_libraries(qhull INTERFACE ${QHULL_PATH}/lib/libqhull.so)
++endif()
++
++if(NOT TARGET qhullstatic_r)
++  message(STATUS "Creating fake qhullstatic_r target to match system-provided qhull")
++  add_library(qhullstatic_r INTERFACE)
++  target_include_directories(qhullstatic_r INTERFACE ${QHULL_PATH}/include/libqhull_r)
++  target_link_libraries(qhullstatic_r INTERFACE ${QHULL_PATH}/lib/libqhull_r.so)
++endif()
++
++if(NOT TARGET tinyxml2)
++  message(STATUS "Skipping FetchContent for tinyxml2 - using system lib.")
++  add_library(tinyxml2 INTERFACE)
++  target_include_directories(tinyxml2 INTERFACE ${TINYXML2_PATH}/include)
++  target_link_libraries(tinyxml2 INTERFACE ${TINYXML2_PATH}/lib/libtinyxml2.so)
++endif()
++
++if(NOT TARGET tinyobjloader)
++  message(STATUS "Skipping FetchContent for tinyobjloader - using system lib.")
++  add_library(tinyobjloader INTERFACE)
++  target_include_directories(tinyobjloader INTERFACE ${TINYOJLOADER_PATH}/include)
++  # target_link_libraries(tinyobjloader INTERFACE ${TINYOJLOADER_PATH}/lib/tinyobjloader.a)
++endif()
++
++if(NOT TARGET SdfLib)
++  message(STATUS "Skipping FetchContent for sdflib - using system lib.")
++  add_library(SdfLib INTERFACE)
++  target_include_directories(SdfLib INTERFACE ${SDFLIB_PATH}/include)
++  # target_link_libraries(SdfLib INTERFACE ${SDFLIB_PATH}/lib/sdflib.so)
++endif()
++
++if(NOT TARGET ccd)
++  message(STATUS "Skipping FetchContent for ccd - using system lib.")
++  add_library(ccd INTERFACE)
++  target_include_directories(ccd INTERFACE ${LIBCCD_PATH}/include)
++  target_link_libraries(ccd INTERFACE ${LIBCCD_PATH}/lib/libccd.so)
++  target_compile_options(ccd PRIVATE ${MUJOCO_MACOS_COMPILE_OPTIONS})
+ endif()
+ 
++if(NOT TARGET absl::core_headers)
++  message(STATUS "Skipping FetchContent for absl - using system lib.")
++  add_library(absl_core_headers INTERFACE)
++  add_library(absl::core_headers ALIAS absl_core_headers)
++  target_include_directories(absl_core_headers INTERFACE ${ABSEIL_CPP_PATH}/include)
++  target_link_libraries(absl_core_headers INTERFACE ${ABSEIL_CPP_PATH}/lib/libabsl_base.so)
++endif()
++
++if(NOT TARGET gtest)
++  message(STATUS "Skipping FetchContent for gtest - using system lib.")
++  add_library(gtest INTERFACE)
++  # add_library(gmock INTERFACE gtest)
++  # add_library(gtest_main INTERFACE gtest)
++  target_include_directories(gtest INTERFACE ${GTEST_PATH}/include)
++  # target_link_libraries(gtest INTERFACE ${GTEST_PATH}/lib/gtest.so)
++endif()
++
++if(NOT TARGET benchmark::benchmark)
++  message(STATUS "Skipping FetchContent for benchmark::benchmark - using system lib.")
++  add_library(benchmark INTERFACE)
++  add_library(benchmark::benchmark ALIAS benchmark)
++  add_library(benchmark::benchmark_main ALIAS benchmark)
++  target_include_directories(benchmark INTERFACE ${BENCHMARK_PATH}/include)
++  target_link_libraries(benchmark INTERFACE ${BENCHMARK_PATH}/lib/libbenchmark.so)
++endif()
++
++
++
+ set(QHULL_ENABLE_TESTING OFF)
+ 
+ findorfetch(
+   USE_SYSTEM_PACKAGE
+-  OFF
++  ON
+   PACKAGE_NAME
+   qhull
+   LIBRARY_NAME
+@@ -152,7 +205,7 @@ target_link_options(qhullstatic_r PRIVATE ${MUJOCO_MACOS_LINK_OPTIONS})
+ set(tinyxml2_BUILD_TESTING OFF)
+ findorfetch(
+   USE_SYSTEM_PACKAGE
+-  OFF
++  ON
+   PACKAGE_NAME
+   tinyxml2
+   LIBRARY_NAME
+@@ -170,7 +223,7 @@ target_link_options(tinyxml2 PRIVATE ${MUJOCO_MACOS_LINK_OPTIONS})
+ 
+ findorfetch(
+   USE_SYSTEM_PACKAGE
+-  OFF
++  ON
+   PACKAGE_NAME
+   tinyobjloader
+   LIBRARY_NAME
+@@ -189,7 +242,7 @@ option(SDFLIB_USE_OPENMP OFF)
+ option(SDFLIB_USE_ENOKI OFF)
+ findorfetch(
+   USE_SYSTEM_PACKAGE
+-  OFF
++  ON
+   PACKAGE_NAME
+   sdflib
+   LIBRARY_NAME
+@@ -209,7 +262,7 @@ set(ENABLE_DOUBLE_PRECISION ON)
+ set(CCD_HIDE_ALL_SYMBOLS ON)
+ findorfetch(
+   USE_SYSTEM_PACKAGE
+-  OFF
++  ON
+   PACKAGE_NAME
+   ccd
+   LIBRARY_NAME
+@@ -249,7 +302,7 @@ if(MUJOCO_BUILD_TESTS)
+   set(ABSL_BUILD_TESTING OFF)
+   findorfetch(
+     USE_SYSTEM_PACKAGE
+-    OFF
++    ON
+     PACKAGE_NAME
+     absl
+     LIBRARY_NAME
+@@ -276,7 +329,7 @@ if(MUJOCO_BUILD_TESTS)
+ 
+   findorfetch(
+     USE_SYSTEM_PACKAGE
+-    OFF
++    ON
+     PACKAGE_NAME
+     GTest
+     LIBRARY_NAME
+@@ -310,7 +363,7 @@ if(MUJOCO_BUILD_TESTS)
+ 
+   findorfetch(
+     USE_SYSTEM_PACKAGE
+-    OFF
++    ON
+     PACKAGE_NAME
+     benchmark
+     LIBRARY_NAME
+@@ -330,25 +383,12 @@ endif()
+ if(MUJOCO_TEST_PYTHON_UTIL)
+   add_compile_definitions(EIGEN_MPL2_ONLY)
+   if(NOT TARGET eigen)
+-    # Support new IN_LIST if() operator.
+-    set(CMAKE_POLICY_DEFAULT_CMP0057 NEW)
+-
+-    FetchContent_Declare(
+-      Eigen3
+-      GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
+-      GIT_TAG ${MUJOCO_DEP_VERSION_Eigen3}
+-    )
+-
+-    FetchContent_GetProperties(Eigen3)
+-    if(NOT Eigen3_POPULATED)
+-      FetchContent_Populate(Eigen3)
+-
+-      # Mark the library as IMPORTED as a workaround for https://gitlab.kitware.com/cmake/cmake/-/issues/15415
+-      add_library(Eigen3::Eigen INTERFACE IMPORTED)
+-      set_target_properties(
+-        Eigen3::Eigen PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${eigen3_SOURCE_DIR}"
+-      )
+-    endif()
++    
++    message(STATUS "Skipping FetchContent for Eigen3::Eigen - using system lib.")
++    add_library(eigen INTERFACE)
++    add_library(Eigen3::Eigen ALIAS eigen)
++    target_include_directories(eigen INTERFACE ${CMAKE_INSTALL_PREFIX}/include)
++    target_link_libraries(eigen INTERFACE ${CMAKE_INSTALL_PREFIX}/lib/eigen.so)
+   endif()
+ endif()
+ 
+@@ -357,3 +397,4 @@ set(BUILD_SHARED_LIBS
+     ${BUILD_SHARED_LIBS_OLD}
+     CACHE BOOL "Build MuJoCo as a shared library" FORCE
+ )
++
+diff --git a/cmake/MujocoOptions.cmake b/cmake/MujocoOptions.cmake
+index de146d89..356251d6 100644
+--- a/cmake/MujocoOptions.cmake
++++ b/cmake/MujocoOptions.cmake
+@@ -66,8 +66,8 @@ set(BUILD_SHARED_LIBS
+     CACHE BOOL "Build Mujoco as shared library."
+ )
+ 
+-option(MUJOCO_ENABLE_AVX "Build binaries that require AVX instructions, if possible." ON)
+-option(MUJOCO_ENABLE_AVX_INTRINSICS "Make use of hand-written AVX intrinsics, if possible." ON)
++option(MUJOCO_ENABLE_AVX "Build binaries that require AVX instructions, if possible." OFF)
++option(MUJOCO_ENABLE_AVX_INTRINSICS "Make use of hand-written AVX intrinsics, if possible." OFF)
+ option(MUJOCO_ENABLE_RPATH "Enable RPath support when installing Mujoco." ON)
+ mark_as_advanced(MUJOCO_ENABLE_RPATH)
+ 
+diff --git a/cmake/TargetAddRpath.cmake b/cmake/TargetAddRpath.cmake
+index 03542231..20ff4f91 100644
+--- a/cmake/TargetAddRpath.cmake
++++ b/cmake/TargetAddRpath.cmake
+@@ -177,13 +177,19 @@ function(target_add_rpath)
+       list(REMOVE_DUPLICATES _install_rpath)
+     endif()
+ 
+-    set_target_properties(
+-      ${_target}
+-      PROPERTIES INSTALL_RPATH ${_install_rpath}
+-                 INSTALL_RPATH_USE_LINK_PATH ${_ARGS_USE_LINK_PATH}
+-                 BUILD_WITH_INSTALL_RPATH TRUE
+-                 MACOSX_RPATH ON # This is ON by default.
+-    )
++    # message(--------------)
++    # message(${_target})
++    # message(${_install_rpath})
++    # message(${_ARGS_USE_LINK_PATH})    
++    # message(--------------)
++
++    #set_target_properties(
++    #  ${_target}
++    #  PROPERTIES INSTALL_RPATH ${_install_rpath}
++    #             INSTALL_RPATH_USE_LINK_PATH ${_ARGS_USE_LINK_PATH}
++    #             BUILD_WITH_INSTALL_RPATH TRUE
++    #             MACOSX_RPATH ON # This is ON by default.
++    #)
+   endforeach()
+ 
+ endfunction()
+diff --git a/sample/cmake/SampleOptions.cmake b/sample/cmake/SampleOptions.cmake
+index de146d89..356251d6 100644
+--- a/sample/cmake/SampleOptions.cmake
++++ b/sample/cmake/SampleOptions.cmake
+@@ -66,8 +66,8 @@ set(BUILD_SHARED_LIBS
+     CACHE BOOL "Build Mujoco as shared library."
+ )
+ 
+-option(MUJOCO_ENABLE_AVX "Build binaries that require AVX instructions, if possible." ON)
+-option(MUJOCO_ENABLE_AVX_INTRINSICS "Make use of hand-written AVX intrinsics, if possible." ON)
++option(MUJOCO_ENABLE_AVX "Build binaries that require AVX instructions, if possible." OFF)
++option(MUJOCO_ENABLE_AVX_INTRINSICS "Make use of hand-written AVX intrinsics, if possible." OFF)
+ option(MUJOCO_ENABLE_RPATH "Enable RPath support when installing Mujoco." ON)
+ mark_as_advanced(MUJOCO_ENABLE_RPATH)
+ 
+diff --git a/simulate/cmake/SimulateDependencies.cmake b/simulate/cmake/SimulateDependencies.cmake
+index 5141406c..a1d484cb 100644
+--- a/simulate/cmake/SimulateDependencies.cmake
++++ b/simulate/cmake/SimulateDependencies.cmake
+@@ -74,6 +74,19 @@ set(GLFW_BUILD_TESTS OFF)
+ set(GLFW_BUILD_DOCS OFF)
+ set(GLFW_INSTALL OFF)
+ 
++
++
++if(NOT TARGET glfw)
++  message(STATUS "Skipping FetchContent for glfw - using system lib.")
++  add_library(glfw INTERFACE)
++  target_include_directories(glfw INTERFACE ${GLFW_PATH}/include)
++  # target_include_directories(glfw INTERFACE ${GLFW_PATH}/include/GLFW)
++  target_link_libraries(glfw INTERFACE ${GLFW_PATH}/lib/libglfw.so)
++endif()
++
++
++
++
+ findorfetch(
+   USE_SYSTEM_PACKAGE
+   MUJOCO_SIMULATE_USE_SYSTEM_GLFW
+diff --git a/simulate/cmake/SimulateOptions.cmake b/simulate/cmake/SimulateOptions.cmake
+index de146d89..356251d6 100644
+--- a/simulate/cmake/SimulateOptions.cmake
++++ b/simulate/cmake/SimulateOptions.cmake
+@@ -66,8 +66,8 @@ set(BUILD_SHARED_LIBS
+     CACHE BOOL "Build Mujoco as shared library."
+ )
+ 
+-option(MUJOCO_ENABLE_AVX "Build binaries that require AVX instructions, if possible." ON)
+-option(MUJOCO_ENABLE_AVX_INTRINSICS "Make use of hand-written AVX intrinsics, if possible." ON)
++option(MUJOCO_ENABLE_AVX "Build binaries that require AVX instructions, if possible." OFF)
++option(MUJOCO_ENABLE_AVX_INTRINSICS "Make use of hand-written AVX intrinsics, if possible." OFF)
+ option(MUJOCO_ENABLE_RPATH "Enable RPath support when installing Mujoco." ON)
+ mark_as_advanced(MUJOCO_ENABLE_RPATH)
+ 

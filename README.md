@@ -54,8 +54,3 @@ python3 plots_scripts/process_pickles.py results/Acrobot/Acrobot_guix_with_maske
 ```
 
 Once all the results have been copied to `results`, these can the be used to reproduce the various plots of the article.
-
-
-# TODO
-- update readmes and doc.
-- guix: warn if output outside of shared in container.

@@ -1,15 +1,4 @@
-(use-modules (ice-9 match))
-
-(define script-dir (dirname (current-filename)))
-(define relative-path "guix-rl")
-(define full-path (string-join (list script-dir relative-path) "/"))
-
-(list (channel
-        (name 'guix-rl)
-        (url full-path)
-        (branch "main")
-        (commit
-          "2767f9d6025a203873d2cc20193f3be212f79a9d"))
+(list 
       (channel
         (name 'guix)
         (url "https://git.guix.gnu.org/guix.git")

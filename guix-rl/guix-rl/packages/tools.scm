@@ -38,7 +38,7 @@
   #:use-module (guix utils)
   #:use-module (gnu packages video)
   #:use-module (gnu packages python-compression)
-  #:use-module (gnu packages gl)
+  
   ; #:use-module (guix-science-nonfree packages machine-learning)
 )
 
@@ -308,40 +308,6 @@
     (description "libvirtcpuid provides transparent CPUID virtualization, all in userspace. ")
     (license license:gpl2)))
 
-(define-public python-glfw
-  (package
-    (name "python-glfw")
-    (version "2.8.0")
-    (source
-     (origin
-       (method url-fetch)
-       (uri (pypi-uri "glfw" version))
-       (sha256
-        (base32 "1w36jvn6fx8p7irhwj6bbl67m2id3s0227b3w7bgw9hbicr0vsch"))))
-    (build-system pyproject-build-system)
-    (arguments
-     (list
-      #:tests? #f ; no tests provided
-      #:phases
-      #~(modify-phases %standard-phases
-          (add-after 'unpack 'fix-lib-paths
-            (lambda _
-              (substitute* "glfw/library.py"
-                (("_get_library_search_paths\\(\\), ")
-                 (format #f "[ '~a/lib' ],"
-                         #$(this-package-input "glfw")))))))))
-    (native-inputs
-     (list python-pytest
-           python-setuptools
-           python-wheel))
-    (inputs
-     (list glfw))
-    (home-page "https://github.com/FlorianRhiem/pyGLFW")
-    (synopsis "Python bindings for GLFW")
-    (description
-     "This package provides Python bindings for @url{http://www.glfw.org/,
-GLFW} OpenGL application development library.")
-    (license license:expat)))
 
 
 (define-public marchingcubecpp
@@ -599,6 +565,41 @@ providing utilities for various projects.")
     (license license:asl2.0)))
 
 
+(define-public python-shimmy
+  (package
+    (name "python-shimmy")
+    (version "0.2.1")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/Farama-Foundation/Shimmy")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0aaxqgna9rb4r88x1v2lk8zgp46zkv9r20yjs40llzdf25h7ixa4"))))
+    (build-system pyproject-build-system)
+    (arguments
+     `(#:phases
+      (modify-phases %standard-phases
+        (replace 'check
+              (lambda* (#:key tests? #:allow-other-keys)
+                (when tests?
+                  (invoke "echo" "Skipped : MoviePy tests require ffmpeg to run.")
+                ))))
+      )
+    )
+    (propagated-inputs (list python-gymnasium python-numpy))
+    (native-inputs (list python-pillow python-pytest python-setuptools))
+    (home-page "https://github.com/Farama-Foundation/Shimmy")
+    (synopsis
+     "An API conversion tool providing Gymnasium and PettingZoo bindings for popular external reinforcement learning environments.")
+    (description
+     "An API conversion tool providing Gymnasium and @code{PettingZoo} bindings for
+popular external reinforcement learning environments.")
+    (license license:expat)))
+
+
 (define-public sdflib
   (package
     (name "sdflib")
@@ -676,5 +677,4 @@ providing utilities for various projects.")
      "Tiny but powerful single file wavefront obj loader written in C++03. No dependency except for C++ STL. It can parse over 10M polygons with moderate memory and time. tinyobjloader is good for embedding .obj loader to your (global illumination) renderer ;-)")
     (home-page "https://github.com/tinyobjloader/tinyobjloader")
     (license license:expat)))
-
 

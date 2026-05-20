@@ -20,6 +20,7 @@
   #:use-module (gnu packages python-build)
   #:use-module (gnu packages python-check)
   #:use-module (gnu packages python-compression)  
+  #:use-module (gnu packages python-graphics)
   #:use-module (gnu packages python-science)
   #:use-module (gnu packages python-web) 
   #:use-module (gnu packages python-xyz)
@@ -89,7 +90,7 @@
        (file-name (git-file-name name version))
        (sha256
         (base32 "1gzsw66z9zmwyv6imrv42lcckr775wpn616wk608zfng7pxq3c6m"))
-       (patches (search-patches "guix-rl/patch/disable-mujoco-fetch.patch"))
+        (patches (search-patches "guix-rl/patch/disable-mujoco-fetch.patch"))
         ))
     (build-system cmake-build-system )
     (arguments
@@ -154,7 +155,7 @@
         (base32 "16hjl5k5bp3s50vvn7j4xdgp0ig7x17j2xwpz2n9lh98ai02ar88"))
         ))
     (build-system pyproject-build-system)
-    (propagated-inputs (list (specification->package "python-numpy")))
+    (propagated-inputs (list (specification->package "python-numpy@1.26.4")))
     (inputs (list cmake zlib sdl2 pybind11 ninja))
 
     (native-inputs
@@ -222,7 +223,7 @@
     )
     )
     (propagated-inputs (list python-cloudpickle python-gym-notices
-                             (specification->package "python-numpy")))
+                             (specification->package "python-numpy@1.26.4")))
     (native-inputs (list python-box2d-py
                          python-imageio
                          python-lz4
@@ -426,7 +427,7 @@ set of reference environments (formerly Gym).")
               (with-output-to-file "tests/__init__.py"
                 (lambda _ (display ""))))))))
     (propagated-inputs (list python-cloudpickle python-farama-notifications
-                             python-importlib-metadata (specification->package "python-numpy")
+                             python-importlib-metadata (specification->package "python-numpy@1.26.4")
                              python-typing-extensions))
     (native-inputs (list python-dill python-pytest python-scipy python-imageio
                          python-setuptools python-wheel))
@@ -461,7 +462,7 @@ set of reference environments (formerly Gym).")
     (propagated-inputs (list python-cycler
                              python-kiwisolver
                              python-matplotlib
-                             (specification->package "python-numpy")
+                             (specification->package "python-numpy@1.26.4")
                              python-pandas
                              python-pyparsing
                              python-dateutil
@@ -509,8 +510,8 @@ set of reference environments (formerly Gym).")
                 )           
         #:tests? #f            
           ))
-    (inputs (list abseil-cpp eigen cmake (specification->package "pybind11") glfw lodepng guile-opengl python-pyopengl python-pyopengl-accelerate glm))      
-    (propagated-inputs (list mujoco python-absl-py python-etils-epath python-glfw (specification->package "python-numpy") python-imageio))
+    (inputs (list abseil-cpp eigen cmake (specification->package "pybind11@2.13.6") glfw lodepng guile-opengl python-pyopengl python-pyopengl-accelerate glm))      
+    (propagated-inputs (list mujoco python-absl-py python-etils-epath python-glfw (specification->package "python-numpy@1.26.4") python-imageio))
     (native-inputs (list python-setuptools python-wheel pkg-config))
     (home-page "https://github.com/google-deepmind/mujoco/tree/main/python")
     (synopsis "MuJoCo Physics Simulator")
@@ -553,7 +554,7 @@ set of reference environments (formerly Gym).")
                         python-cloudpickle
                         python-gymnasium-next
                         python-matplotlib
-                        (specification->package "python-numpy")
+                        (specification->package "python-numpy@1.26.4")
                         python-pandas
                         python-pytorch
                         python-setuptools
@@ -579,33 +580,132 @@ algorithms.")
     (license license:expat)))
 
 
-(define-public python-farama-notifications
+(define-public python-huggingface-sb3
   (package
-    (name "python-farama-notifications")
-    (version "0.0.4")
+    (name "python-huggingface-sb3")
+    (version "3.0")
     (source
-     ;; The version on pypi does not include tests.
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "huggingface_sb3" version))
+       (sha256
+        (base32 "05fmhx89i3jaxzc0r4cd0qv5b9ix8rp68a9hdsbjfn6w10c91bxb"))))
+    (build-system pyproject-build-system)
+
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+          (delete 'check)
+      )))
+
+    (propagated-inputs (list python-cloudpickle python-huggingface-hub
+                             (specification->package "python-numpy@1.26.4") python-pyyaml python-wasabi 
+                             python-gymnasium-next python-stable-baselines3))
+
+    (native-inputs (list python-setuptools python-wheel))
+    (home-page "https://github.com/huggingface/huggingface_sb3")
+    (synopsis
+     "Additional code for Stable-baselines3 to load and upload models from the Hub.")
+    (description
+     "Additional code for Stable-baselines3 to load and upload models from the Hub.")
+    (license #f)))
+(define-public python-rl-zoo3
+  (package
+    (name "python-rl-zoo3")
+    (version "2.7.0")
+    (source
      (origin
        (method git-fetch)
        (uri (git-reference
-             (url "https://github.com/Farama-Foundation/Farama-Notifications")
-             (commit version)))
+             (url "https://github.com/DLR-RM/rl-baselines3-zoo")
+             (commit (string-append "v" version))))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "1k1x48xpvhankw7vbjp20ljwran247aphc2qncqrxivrkgzwjjji"))))
+        (base32 "0lbxxc7llbj6lkkzkgasp19vnm0nask54zlsf09pvg2839vafhka"))))
     (build-system pyproject-build-system)
+
     (arguments
-     (list
-      #:phases
-      '(modify-phases %standard-phases
-         (replace 'check
-           (lambda* (#:key tests? #:allow-other-keys)
-             (when tests?
-               (invoke "python3" "tests/ci-test.py")))))))
-    (native-inputs (list python-pytest python-setuptools python-wheel))
-    (home-page "https://github.com/Farama-Foundation/Farama-Notifications")
-    (synopsis "Notifications for all Farama Foundation maintained libraries")
+     `(#:phases
+       (modify-phases %standard-phases
+
+          (delete 'check)
+          )))
+
+    (propagated-inputs (list python-gymnasium
+                             python-pyyaml
+                             python-rich
+                             python-sb3-contrib
+                             python-shimmy
+                             python-tqdm))
+    (native-inputs (list python-mujoco))
+    (home-page "https://github.com/DLR-RM/rl-baselines3-zoo")
+    (synopsis
+     "A Training Framework for Stable Baselines3 Reinforcement Learning Agents")
     (description
-     "This package allows for providing notifications for all Farama
-Foundation maintained libraries.")
+     "This package provides a Training Framework for Stable Baselines3 Reinforcement
+Learning Agents.")
     (license license:expat)))
+
+(define-public python-sb3-contrib
+  (package
+    (name "python-sb3-contrib")
+    (version "2.7.1")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url
+              "https://github.com/Stable-Baselines-Team/stable-baselines3-contrib")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "111y9zdhhhmj13i0g0f3ws0z74rv31264f6sdwckl96m9jz2p26q"))))
+    (build-system pyproject-build-system)
+
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+
+          (delete 'check)
+          )))
+    (propagated-inputs (list python-stable-baselines3))
+    (home-page
+     "https://github.com/Stable-Baselines-Team/stable-baselines3-contrib")
+    (synopsis "Contrib package of Stable Baselines3, experimental code.")
+    (description "Contrib package of Stable Baselines3, experimental code.")
+    (license license:expat)))
+
+(define-public python-minatar
+  (package
+    (name "python-minatar")
+    (version "1.0.15")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "MinAtar" version))
+       (sha256
+        (base32 "0fikcdbjl7ymnkxsd00lmca4lazm48qr8xgllj36w2nr55xbz6r7"))))
+    (build-system pyproject-build-system)
+    (propagated-inputs (list python-cycler
+                             python-kiwisolver
+                             python-matplotlib
+                             python-numpy
+                             python-pandas
+                             python-pyparsing
+                             python-dateutil
+                             python-pytz
+                             python-scipy
+                             python-seaborn
+                             python-six))
+        (arguments
+         `(#:phases
+           (modify-phases %standard-phases
+              (delete 'check)
+              )))
+    (native-inputs (list python-setuptools-scm python-setuptools))
+    (home-page "https://github.com/kenjyoung/MinAtar")
+    (synopsis "A miniaturized version of the Arcade Learning Environment.")
+    (description
+     "This package provides a miniaturized version of the Arcade Learning Environment.")
+    (license license:gpl3)))
+

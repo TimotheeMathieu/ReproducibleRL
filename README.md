@@ -1,3 +1,5 @@
+This repository is a companion to the paper "Is Deep RL Reproducible? State of the art and new tools" by Timothée Mathieu, Juliette Achddou, Alex Davey, Hector Kohler , Philippe Preux and Julien Teigny. Please read the paper for more informations on the experiments.
+
 # How to
 
 The directory  `g5k_tools` contains helper scripts for the server grid 5000. The directory `tools` contains python script used collect data during training. The directory `plots_scripts` contains scripts and hardware data used to make the plots. The directory `results` contains the results of our experiments. 

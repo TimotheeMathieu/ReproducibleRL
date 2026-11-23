@@ -1,0 +1,13 @@
+[project]
+name = "mujoco-uv-unfrozen"
+version = "0.1.0"
+requires-python = "==3.12.12"
+dependencies = [
+    "gym",
+    "gymnasium[mujoco]",
+    "opencv-python",
+    "pytz",
+    "shimmy",
+    "stable-baselines3",
+    "tensorboard",
+]

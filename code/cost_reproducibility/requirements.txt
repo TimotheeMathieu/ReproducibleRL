@@ -1,0 +1,2 @@
+gymnasium[mujoco]
+stable_baselines3

@@ -1,0 +1,14 @@
+[project]
+name = "atari-uv-unfrozen"
+version = "0.1.0"
+requires-python = "==3.12.12"
+dependencies = [
+    "ale-py",
+    "gym",
+    "gymnasium",
+    "opencv-python",
+    "pytz",
+    "pyyaml",
+    "shimmy",
+    "stable-baselines3",
+]
